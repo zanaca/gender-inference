@@ -1,11 +1,11 @@
 {
   "name": "gender-inference",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Infer gender based on baby names databases",
   "main": "index.js",
   "dependencies": {
-      "fast-levenshtein": "^1.1.3",
-      "diacritics": "^1.2.3"
+    "fast-levenshtein": "^1.1.3",
+    "diacritics": "^1.2.3"
   },
   "devDependencies": {},
   "scripts": {
@@ -13,9 +13,8 @@
   },
   "author": "Zanaca",
   "license": "MIT",
-  "repository" :
- {
-   "type" : "git",
-   "url" : "https://github.com/zanaca/gender-inference"
- }
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zanaca/gender-inference"
+  }
 }
