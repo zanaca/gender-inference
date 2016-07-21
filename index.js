@@ -94,7 +94,7 @@ function infer(_name, _opts){
 
     if (!fuzzySearch && !('fuzzy' in opts) && gender === 'unisex' && found.length === 1) {
         opts.fuzzy = true;
-        output = guess(_name, opts);
+        output = infer(_name, opts);
     }
 
     if (returnMatches) {
