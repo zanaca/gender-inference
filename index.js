@@ -1,4 +1,5 @@
 const levDistance = require('fast-levenshtein');
+const removeDiacritics = require('diacritics').remove;
 const names = require('./lib/names');
 
 module.exports = {infer};
@@ -29,14 +30,24 @@ function infer(_name, _opts){
 
     let fuzzySearch = false;
     let returnMatches = false;
+    let removeDiacritcs = true;
     if ('fuzzy' in opts && opts.fuzzy) {
         fuzzySearch = true;
     }
-    if ('exportMatches' in opts && opts.matches) {
+    if ('exportMatches' in opts && opts.exportMatches) {
         returnMatches = true;
     }
 
+    if ('diacritcs' in opts) {
+        removeDiacritcs = opts.diacritcs === false ? true : false;
+    }
+
     const nameSplitted = name.split(' ');
+    let nameSplittedPlain = [];
+    if (removeDiacritcs) {
+        nameSplittedPlain = removeDiacritics(name).split(' ');
+    }
+
     let output = {
         gender: null,
         score: null,
@@ -45,17 +56,23 @@ function infer(_name, _opts){
     let found = names.filter(function(o) {
         if (!fuzzySearch) {
             if (nameSplitted.indexOf(o.name) > -1) return true;
+            if (removeDiacritcs && nameSplittedPlain.indexOf(o.name) > -1) return true;
         } else {
             let x = nameSplitted.filter(function(n) {
                 return levDistance.get(o.name, n) < 2;
             });
+            if (removeDiacritcs) {
+                x = nameSplittedPlain.filter(function(n) {
+                    return levDistance.get(o.name, n) < 2;
+                });
+            }
             if (x.length > 0) return true;
         }
     });
 
     found = found.sort(function(a, b) {
-        const indexa = nameSplitted.indexOf(a.name);
-        const indexb = nameSplitted.indexOf(b.name);
+        const indexa = removeDiacritcs ? nameSplittedPlain.indexOf(a.name) : nameSplitted.indexOf(a.name);
+        const indexb = removeDiacritcs ? nameSplittedPlain.indexOf(b.name) : nameSplitted.indexOf(b.name);
 
         if (!fuzzySearch) {
             if (indexa < indexb) return -1;
@@ -92,6 +109,15 @@ function infer(_name, _opts){
         output.score = (size / found.length);
     }
 
+    if (removeDiacritcs) {
+        const distance = levDistance.get(_name, removeDiacritics(_name));
+        output.diacriticsRemoved = true;
+        if (found.length > 0) {
+            // Uses half of the distance weight to penalize score
+            output.score -= distance/(2 * _name.length);
+        }
+    }
+
     if (!fuzzySearch && !('fuzzy' in opts) && gender === 'unisex' && found.length === 1) {
         opts.fuzzy = true;
         output = infer(_name, opts);
@@ -109,4 +135,5 @@ function gaussSum(n) {
     return (n * (n + 1)) / 2;
 }
 
-// console.log(infer(process.argv[2], {matches: false}))
+
+// console.log(infer(process.argv[2], {exportMatches: false}))

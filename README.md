@@ -6,6 +6,7 @@ A simple module to infer the gender of a person using it's name. The available g
 
  - `fuzzy` Allow a search for names that are closest to informed name. Defaults to `false`
  - `exportMatches` Return the list of matched names from library for the informed name. Defaults to `false`
+ - `diacritcs` If no gender is found using the informed name, will try to infer gender for the diacritcs removed name. E.g.: João to Joao. Defaults to `false`
 
 ## Instalation
 

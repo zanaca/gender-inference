@@ -4,7 +4,8 @@
   "description": "Infer gender based on baby names databases",
   "main": "index.js",
   "dependencies": {
-      "fast-levenshtein": "^1.1.3"
+      "fast-levenshtein": "^1.1.3",
+      "diacritics": "^1.2.3"
   },
   "devDependencies": {},
   "scripts": {
