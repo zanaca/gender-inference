@@ -51,7 +51,9 @@ gender.infer('Voldemort');
   MIT
 
 ## Release log
-1.0.0 - First release, containing search by exact name and levenshtein distance of a name
+1.0.2 - -;
+1.0.1 - Handling utf-8 names. João -> Joao;
+1.0.0 - First release, containing search by exact name and levenshtein distance of a name.
 
 
 ## Important
