@@ -37,11 +37,11 @@ gender.infer('Pamela');
 
 gender.infer('Ruby');
 // => { gender: 'female',
-//      score: 0.54545454 }
+//      score: 0.7958224257542216,, }
 
 gender.infer('Ruby Rose');
 // => { gender: 'female',
-//      score: 1 }
+//      score: 1, }
 
 gender.infer('Voldemort');
 // => { gender: null,
