@@ -3,7 +3,7 @@
   "version": "1.0.4",
   "description": "Infer gender comparing a person name to a compiled baby name databases",
   "main": "index.js",
-  "keywors": [
+  "keywords": [
     "gender",
     "utf8",
     "diacritics",
