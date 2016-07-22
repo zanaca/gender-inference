@@ -161,7 +161,9 @@ function infer(_name, _opts){
         scoreMax = Math.sqrt(scoreMax);
         if (found[0].gender === 'unisex') {
             const unisexFactor = Math.pow(found.length, 2);
-            score = Math.sqrt(Math.abs(unisexFactor - scoreCounter));
+            if (found.length > 1) {
+                score = Math.sqrt(Math.abs(unisexFactor - scoreCounter));
+            }
         }
         output.gender = gender;
 /*        const size = found.filter(function(n) {
