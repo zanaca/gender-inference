@@ -1,6 +1,6 @@
 {
   "name": "gender-inference",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Infer gender comparing a person name to a compiled baby name databases",
   "main": "index.js",
   "keywords": [
