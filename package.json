@@ -1,6 +1,6 @@
 {
   "name": "gender-inference",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Infer gender based on baby names databases",
   "main": "index.js",
   "dependencies": {
