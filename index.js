@@ -30,7 +30,8 @@ function infer(_name, _opts){
 
     let fuzzySearch = false;
     let returnMatches = false;
-    let removeDiacritcs = true;
+    let disableDiacritics = true;
+    let country = null;
     if ('fuzzy' in opts && opts.fuzzy) {
         fuzzySearch = true;
     }
@@ -39,12 +40,16 @@ function infer(_name, _opts){
     }
 
     if ('diacritcs' in opts) {
-        removeDiacritcs = opts.diacritcs === false ? true : false;
+        disableDiacritics = opts.diacritcs === false ? true : false;
+    }
+
+    if ('country' in opts) {
+        country = String(opts.country);
     }
 
     const nameSplitted = name.split(' ');
     let nameSplittedPlain = [];
-    if (removeDiacritcs) {
+    if (disableDiacritics) {
         nameSplittedPlain = removeDiacritics(name).split(' ');
     }
 
@@ -55,24 +60,51 @@ function infer(_name, _opts){
 
     let found = names.filter(function(o) {
         if (!fuzzySearch) {
-            if (nameSplitted.indexOf(o.name) > -1) return true;
-            if (removeDiacritcs && nameSplittedPlain.indexOf(o.name) > -1) return true;
+            if (nameSplitted.indexOf(o.name.toLowerCase()) > -1) return true;
+            if (disableDiacritics && nameSplittedPlain.indexOf(o.name.toLowerCase()) > -1) return true;
         } else {
             let x = nameSplitted.filter(function(n) {
-                return levDistance.get(o.name, n) < 2;
+                return levDistance.get(o.name.toLowerCase(), n) < 2;
             });
-            if (removeDiacritcs) {
+            if (disableDiacritics) {
                 x = nameSplittedPlain.filter(function(n) {
-                    return levDistance.get(o.name, n) < 2;
+                    return levDistance.get(o.name.toLowerCase(), n) < 2;
                 });
             }
             if (x.length > 0) return true;
         }
     });
 
+    if (country) {
+        const foundCountry = found.filter(function(o){
+            if ('country' in o && o.country.indexOf(country) >= 0) return true;
+        })
+        const hasCountry = foundCountry.length > 0;
+        if (hasCountry) {
+            const foundNames = [];
+            for (const index in foundCountry) {
+                foundNames.push(foundCountry[index].name.toLowerCase());
+                foundNames.push(removeDiacritics(foundCountry[index].name.toLowerCase()));
+            }
+            for (const index in found) {
+                const name = found[index].name.toLowerCase();
+                if (foundNames.indexOf(name) === -1) {
+                    foundCountry.push(found[index]);
+                }
+            }
+            found = foundCountry;
+            delete foundCountry;
+        } else {
+            found = found.filter(function(o){
+                if ('country' in o) return false;
+                return true;
+            });
+        }
+    }
+
     found = found.sort(function(a, b) {
-        const indexa = removeDiacritcs ? nameSplittedPlain.indexOf(a.name) : nameSplitted.indexOf(a.name);
-        const indexb = removeDiacritcs ? nameSplittedPlain.indexOf(b.name) : nameSplitted.indexOf(b.name);
+        const indexa = disableDiacritics ? nameSplittedPlain.indexOf(a.name) : nameSplitted.indexOf(a.name);
+        const indexb = disableDiacritics ? nameSplittedPlain.indexOf(b.name) : nameSplitted.indexOf(b.name);
 
         if (!fuzzySearch) {
             if (indexa < indexb) return -1;
@@ -86,6 +118,7 @@ function infer(_name, _opts){
     });
 
     let scoreCounter = 0.0;
+    let scoreMax = 0;
     let gender = null;
 
     for(const index in found) {
@@ -93,28 +126,32 @@ function infer(_name, _opts){
         if (['unisex', null].indexOf(gender) > -1 ) {
             gender = found[index].gender;
         }
+        scoreMax += factor;
         if (found[index].gender === 'male') {
             scoreCounter += factor;
         } else if (found[index].gender === 'female') {
             scoreCounter += -1 * factor;
         }
     }
-
+    if (scoreCounter === 0) {
+        scoreCounter = 1;
+    }
     if (found.length > 0) {
         const score = Math.sqrt(Math.abs(scoreCounter));
+        scoreMax = Math.sqrt(scoreMax);
         output.gender = gender;
-        const size = found.filter(function(n) {
+/*        const size = found.filter(function(n) {
             return ['unisex', gender].indexOf(n.gender) > -1;
         }).length;
-        output.score = (size / found.length);
+*/        output.score = (score / scoreMax); // * (size / found.length);
     }
 
-    if (removeDiacritcs) {
+    if (disableDiacritics && nameSplitted.join('') !== nameSplittedPlain.join('')) {
         const distance = levDistance.get(_name, removeDiacritics(_name));
         output.diacriticsRemoved = true;
         if (found.length > 0) {
             // Uses half of the distance weight to penalize score
-            output.score -= distance/(2 * _name.length);
+            output.score -= Math.pow(distance/_name.length, 2);
         }
     }
 

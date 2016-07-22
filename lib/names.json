@@ -36745,7 +36745,7 @@
  {"name": "amory", "gender": "unisex"},
  {"name": "andrea", "gender": "unisex"},
  {"name": "andre", "gender": "unisex"},
- {"name": "andr\u00e9", "gender": "male"},
+ {"name": "andr\u00e9", "gender": "male", "country": ["BRA", "FRA", "GRC"]},
  {"name": "andree", "gender": "unisex"},
  {"name": "andri", "gender": "unisex"},
  {"name": "andy", "gender": "unisex"},
