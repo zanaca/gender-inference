@@ -1,9 +1,18 @@
 {
   "name": "gender-inference",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Infer gender comparing a person name to a compiled baby name databases",
   "main": "index.js",
-  "keywors": ["gender", "utf8", "diacritics", "accents", "accentuation", "i18n", "internationalization", "guess"],
+  "keywors": [
+    "gender",
+    "utf8",
+    "diacritics",
+    "accents",
+    "accentuation",
+    "i18n",
+    "internationalization",
+    "guess"
+  ],
   "dependencies": {
     "fast-levenshtein": "^1.1.3",
     "diacritics": "^1.2.3"
